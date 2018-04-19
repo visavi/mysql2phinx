@@ -10,19 +10,28 @@ $ php -f mysql2phinx.php [database] [user] [password] > migration.php
 
 Will create an initial migration class in the file `migration.php` for all tables in the database passed. 
 
-## Caveat
+## Example
 
-The `id` column will be unsigned. Phinx does not currently supported unsigned primary columns. There is [a workaround](https://github.com/robmorgan/phinx/issues/250).
+```
+$table = $this->table('downs', ['collation' => 'utf8mb4_unicode_ci']);
+$table
+    ->addColumn('category_id', 'integer', ['limit' => MysqlAdapter::INT_SMALL, 'signed' => false, 'default' => 0])
+    ->addColumn('title', 'string', ['limit' => 100])
+    ->addColumn('text', 'text', ['null' => true])
+    ->addColumn('user_id', 'integer')
+    ->addColumn('created_at', 'integer')
+    ->addColumn('type', 'enum', ['values' => ['ban','unban','change']])
+    ->addColumn('count_comments', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'signed' => false, 'default' => 0])
+    ->addColumn('rating', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'signed' => false, 'default' => 0])
+    ->addColumn('rated', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'signed' => false, 'default' => 0])
+    ->addColumn('loads', 'integer', ['limit' => MysqlAdapter::INT_MEDIUM, 'signed' => false, 'default' => 0])
+    ->addColumn('active', 'boolean', ['default' => 0])
+    ->addColumn('updated_at', 'integer', ['null' => true])
+    ->addIndex('category_id')
+    ->addIndex('created_at')
+    ->addIndex('text', ['type' => 'fulltext'])
+    ->addIndex('title', ['type' => 'fulltext'])
+    ->addIndex(['user_id', 'created_at'], ['name' => 'user_created'])
+    ->create();
+```
 
-### TODOs
-
-Not all phinx functionality is covered! **Check your migration code before use!**
-
-Currently **not supported**:
-
-* Column types:
-  * [ ] `float`
-  * [ ] `decimal`
-  * [ ] `time`
-  * [ ] `binary`
-  * [ ] `boolean`
