@@ -18,17 +18,17 @@ if ($argc < 4) {
     exit;
 }
 
-$config = array(
+$config = [
     'name'    => $argv[1],
     'user'    => $argv[2],
     'pass'    => $argv[3],
     'host'    => $argc === 5 ? $argv[6] : 'localhost',
     'port'    => $argc === 6 ? $argv[5] : '3306'
-);
+];
 
 function createMigration($mysqli, $indent = 2)
 {
-    $output = array();
+    $output = [];
     foreach (getTables($mysqli) as $table) {
         $output[] = getTableMigration($table, $mysqli, $indent);
     }
@@ -50,7 +50,7 @@ function getTableMigration($table, $mysqli, $indent)
 {
     $ind = getIndentation($indent);
 
-    $output = array();
+    $output = [];
     $output[] = $ind . '// Migration for table ' . $table;
     $output[] = $ind . '$table = $this->table(\'' . $table . '\', [\'collation\' => \'utf8mb4_unicode_ci\']);';
     $output[] = $ind . '$table';
@@ -92,7 +92,7 @@ function getIndexMigrations($indexes, $indent)
 {
     $ind = getIndentation($indent);
 
-    $keyedindexes = array();
+    $keyedindexes = [];
     foreach($indexes as $index) {
         if ($index['Column_name'] === 'id') {
             continue;
@@ -100,8 +100,8 @@ function getIndexMigrations($indexes, $indent)
 
         $key = $index['Key_name'];
         if (!isset($keyedindexes[$key])) {
-            $keyedindexes[$key] = array();
-            $keyedindexes[$key]['columns'] = array();
+            $keyedindexes[$key] = [];
+            $keyedindexes[$key]['columns'] = [];
             $keyedindexes[$key]['unique'] = $index['Non_unique'] !== '1';
             $keyedindexes[$key]['fulltext'] = $index['Index_type'] === 'FULLTEXT';
         }
@@ -157,10 +157,10 @@ function getForeignKeysMigrations($foreign_keys, $indent)
     $ind = getIndentation($indent);
     $output = [];
     foreach ($foreign_keys as $foreign_key) {
-        $output[] = $ind . "->addForeignKey('" . $foreign_key['COLUMN_NAME'] . "', '" . $foreign_key['REFERENCED_TABLE_NAME'] . "', '" . $foreign_key['REFERENCED_COLUMN_NAME'] . "', array("
+        $output[] = $ind . "->addForeignKey('" . $foreign_key['COLUMN_NAME'] . "', '" . $foreign_key['REFERENCED_TABLE_NAME'] . "', '" . $foreign_key['REFERENCED_COLUMN_NAME'] . "', ["
             . "'delete' => '" . str_replace(' ', '_', $foreign_key['DELETE_RULE']) . "',"
             . "'update' => '" . str_replace(' ', '_', $foreign_key['UPDATE_RULE']) . "'"
-            . "))";
+            . "])";
     }
     return implode(PHP_EOL, $output);
 }
@@ -217,7 +217,7 @@ function getPhinxColumnType($columndata)
 
 function getPhinxColumnAttibutes($phinxtype, $columndata)
 {
-    $attributes = array();
+    $attributes = [];
 
     // limit / length
     $limit = 0;
@@ -271,7 +271,7 @@ function getPhinxColumnAttibutes($phinxtype, $columndata)
 
     // enum values
     if ($phinxtype === 'enum') {
-        $attributes[] = '\'values\' => ' . str_replace('enum', 'array', $columndata['Type']);
+        $attributes[] = '\'values\' => ' . str_replace(['enum(', ')'], ['[', ']'], $columndata['Type']);
     }
 
     // has NULL
