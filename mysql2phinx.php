@@ -37,13 +37,13 @@ function createMigration($mysqli, $indent = 2)
 
 function getMysqliConnection($config)
 {
-    return new mysqli($config['host'], $config['user'], $config['pass'], $config['name']);
+    return new PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['name'], $config['user'], $config['pass']);
 }
 
 function getTables($mysqli)
 {
     $res = $mysqli->query('SHOW TABLES');
-    return array_map(function($a) { return $a[0]; }, $res->fetch_all());
+    return array_map(function($a) { return $a[0]; }, $res->fetchAll());
 }
 
 function getTableMigration($table, $mysqli, $indent)
@@ -219,8 +219,6 @@ function getPhinxColumnAttibutes($phinxtype, $columndata)
 {
     $attributes = array();
 
-    // var_dump($columndata);
-
     // limit / length
     $limit = 0;
     switch (getMySQLColumnType($columndata)) {
@@ -298,13 +296,13 @@ function getPhinxColumnAttibutes($phinxtype, $columndata)
 function getColumns($table, $mysqli)
 {
     $res = $mysqli->query('SHOW COLUMNS FROM ' . $table);
-    return $res->fetch_all(MYSQLI_ASSOC);
+    return $res->fetchAll();
 }
 
 function getIndexes($table, $mysqli)
 {
     $res = $mysqli->query('SHOW INDEXES FROM ' . $table);
-    return $res->fetch_all(MYSQLI_ASSOC);
+    return $res->fetchAll();
 }
 
 function getForeignKeys($table, $mysqli)
@@ -335,7 +333,7 @@ function getForeignKeys($table, $mysqli)
         AND refs.REFERENCED_TABLE_NAME IS NOT NULL
         AND cons.CONSTRAINT_TYPE = 'FOREIGN KEY'
     ;");
-    return $res->fetch_all(MYSQLI_ASSOC);
+    return $res->fetchAll();
 }
 
 function getIndentation($level)
