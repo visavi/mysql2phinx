@@ -5,7 +5,7 @@ A simple cli php script to generate a [phinx](https://github.com/robmorgan/phinx
 ## Usage
 
 ```
-$ php -f mysql2phinx.php [database] [user] [password] > migration.php
+$ php mysql2phinx.php [database] [user] [password] > migration.php
 ```
 
 Will create an initial migration class in the file `migration.php` for all tables in the database passed. 

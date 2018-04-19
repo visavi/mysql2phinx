@@ -4,7 +4,7 @@
  *
  * Commandline usage:
  * ```
- * $ php -f mysql2phinx [database] [user] [password] > migration.php
+ * $ php mysql2phinx [database] [user] [password] > migration.php
  * ```
  */
 
@@ -13,7 +13,7 @@ if ($argc < 4) {
     echo 'Phinx MySQL migration generator' . PHP_EOL;
     echo '===============================' . PHP_EOL;
     echo 'Usage:' . PHP_EOL;
-    echo 'php -f ' . $argv[0] . ' [database] [user] [password] > migration.php';
+    echo 'php ' . $argv[0] . ' [database] [user] [password] > migration.php';
     echo PHP_EOL;
     exit;
 }
@@ -32,7 +32,7 @@ function createMigration($mysqli, $indent = 2)
     foreach (getTables($mysqli) as $table) {
         $output[] = getTableMigration($table, $mysqli, $indent);
     }
-    return implode(PHP_EOL, $output) . PHP_EOL ;
+    return implode(PHP_EOL, $output) . PHP_EOL;
 }
 
 function getMysqliConnection($config)
@@ -69,8 +69,7 @@ function getTableMigration($table, $mysqli, $indent)
         $output[] = $foreign_keys;
     }
 
-    $output[] = $ind . '    ->create();';
-    $output[] = PHP_EOL;
+    $output[] = $ind . '    ->create();' . PHP_EOL;
 
     return implode(PHP_EOL, $output);
 }
@@ -349,7 +348,6 @@ echo 'class InitialMigration extends AbstractMigration' . PHP_EOL;
 echo '{' . PHP_EOL;
 echo '    public function up()' . PHP_EOL;
 echo '    {' . PHP_EOL;
-echo '        // Automatically created phinx migration commands for tables from database ' . $config['name'] . PHP_EOL . PHP_EOL;
 echo createMigration(getMysqliConnection($config));
 echo '    }' . PHP_EOL;
 echo '}' . PHP_EOL;
